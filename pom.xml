@@ -1,0 +1,102 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<properties>
+		<lib7zVersion>4.65</lib7zVersion>
+		<bindingsVersion>1.05</bindingsVersion>
+		<bindingsReleaseStage>rc</bindingsReleaseStage>
+		<bindingsImplStage>extr-only</bindingsImplStage>
+		<bindingsPlatform>AllPlatforms</bindingsPlatform>
+		<folderName>${lib7zVersion}-${bindingsVersion}${bindingsReleaseStage}-${bindingsImplStage}</folderName>
+		<packageVersion>${lib7zVersion}-${bindingsVersion}-${bindingsReleaseStage}-${bindingsImplStage}</packageVersion>
+		<packageName>sevenzipjbinding-${packageVersion}-AllPlatforms</packageName>
+		<packageMD5>ec31c4650ef53d890a42ba5b9e331d7e</packageMD5>
+	</properties>
+
+	<!-- Maven expects version to be hard coded, make sure it is always consistent with the bindingsVersion -->
+	<version>1.05-rc</version>
+	<groupId>net.sf.sevenzipjbinding</groupId>
+	<artifactId>sevenzipjbinding</artifactId>
+	<packaging>pom</packaging>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>sonatype-public-repository</id>
+			<url>https://oss.sonatype.org/content/groups/public</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<build>
+
+		<plugins>
+			<plugin>
+				<groupId>com.googlecode.maven-download-plugin</groupId>
+				<artifactId>maven-download-plugin</artifactId>
+				<version>1.0.0</version>
+				<executions>
+					<execution>
+						<id>download-7zip-Jbindings</id>
+						<phase>package</phase>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>http://downloads.sourceforge.net/project/sevenzipjbind/7-Zip-JBinding/${folderName}/${packageName}.zip</url>
+							<unpack>true</unpack>
+							<outputDirectory>${project.build.directory}</outputDirectory>
+							<md5>${packageMD5}</md5>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>
+								attach-artifact
+							</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<arifact>
+								<file>${project.build.directory}/${packageName}/lib/${project.artifactId}.jar</file>
+								<type>jar</type>
+								</arifact>
+								<arifact>
+								<classifier>${bindingsPlatform}</classifier>
+								<file>${project.build.directory}/${packageName}/lib/${project.artifactId}-${bindingsPlatform}.jar</file>
+								<type>jar</type>
+								</arifact>
+								<arifact>
+								<classifier>sources</classifier>
+								<file>${project.build.directory}/${packageName}/java-src.zip</file>
+								<type>jar</type>
+								</arifact>
+								<arifact>
+								<classifier>javadoc</classifier>
+								<file>${project.build.directory}/${packageName}/javadoc.zip</file>
+								<type>jar</type>
+								</arifact>
+							</artifacts>
+						</configuration>
+					</execution>
+
+				</executions>
+
+			</plugin>
+		</plugins>
+	</build>
+</project>
